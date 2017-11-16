@@ -105,7 +105,10 @@ namespace Kentor.AuthServices.WebSso
 
             options.SPOptions.Logger.WriteVerbose("Calling idp " + idp.EntityId.Id + " to resolve artifact\n" + artifact);
 
-            var response = Saml2SoapBinding.SendSoapRequest(payload, arsUri);
+            var response = Saml2SoapBinding.SendSoapRequest(
+                            payload,
+                            arsUri,
+                            options.SPOptions.ArtifactResolutionTlsCertificate);
 
             options.SPOptions.Logger.WriteVerbose("Artifact resolved returned\n" + response);
 

@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Kentor.AuthServices.Internal;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -51,8 +53,9 @@ namespace Kentor.AuthServices.Saml2P
         /// </summary>
         /// <param name="payload">Message payload</param>
         /// <param name="destination">Destination endpoint</param>
+        /// <param name="clientCertificate">Client certificate for the Soap request</param>
         /// <returns>Response.</returns>
-        public static XmlElement SendSoapRequest(string payload, Uri destination)
+        public static XmlElement SendSoapRequest(string payload, Uri destination, X509Certificate2 clientCertificate)
         {
             if(destination == null)
             {
@@ -71,7 +74,7 @@ namespace Kentor.AuthServices.Saml2P
 
             var message = CreateSoapBody(payload);
 
-            using (var client = new WebClient())
+            using (var client = new ClientCertificateWebClient(clientCertificate))
             {
                 client.Headers.Add("SOAPAction", "http://www.oasis-open.org/committees/security");
                 var response = client.UploadString(destination, message);
